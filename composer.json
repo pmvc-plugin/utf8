@@ -1,0 +1,19 @@
+{
+    "name": "pmvc-plugin/utf8",
+    "description": "utf8 util",
+    "type": "library",
+    "homepage": "https://github.com/pmvc/pmvc",
+    "keywords": ["utf8", "pmvc", "plug-in"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hill",
+            "email": "hill@kimo.com"
+        }
+    ],
+    "require": {
+        "pmvc-plugin/mbstring": "*",
+        "pmvc/pmvc": "*"
+    },
+    "minimum-stability": "dev"
+}
