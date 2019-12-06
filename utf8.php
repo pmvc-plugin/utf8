@@ -51,4 +51,8 @@ class utf8 extends PlugIn
       $encoding = $this->internalEncoding($encoding, true);
       return $this->_encoder->substr($str, $start, $length, $encoding);
     }
+
+    public function eregReplace($pattern, $replacement, $string, $option='msr') {
+      return $this->_encoder->eregReplace($pattern, $replacement, $string, $option);
+    }
 }
