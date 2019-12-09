@@ -23,6 +23,25 @@ class utf8 extends PlugIn
       $this->_encoder = \PMVC\plug($this['encoder']);
     }
 
+    public function utf8Encode($str)
+    {
+      return utf8_encode($str); 
+    }
+
+    public function detectOrder($encoding_list = null) {
+      if (!is_null($encoding_list)) {
+        $this->_encoder->detectOrder($encoding_list);
+      }
+      return $this->_encoder->detectOrder();
+    }
+
+    public function detectEncoding($str, $encoding_list = null, $strict = false) {
+      if (is_null($encoding_list)) {
+        $encoding_list = $this->detectOrder();
+      }
+      return $this->_encoder->detectEncoding($str, $encoding_list, $strict);
+    }
+
     public function internalEncoding($encoding=null, $keepDefault=false) {
       $encoder = $this->_encoder;
       $default = $encoder->internalEncoding();

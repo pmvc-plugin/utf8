@@ -24,4 +24,15 @@ class Utf8Test extends PHPUnit_Framework_TestCase
       $this->assertEquals('或', $acture);
       $this->assertEquals(3, strlen($acture));
     }
+
+    function testDetectOrder()
+    {
+      $p = \PMVC\plug($this->_plug);
+      $original = $p->detectOrder();
+      $a = ['UTF-8'];
+      $b = $p->detectOrder($a);
+      $this->assertEquals($a, $b);
+      $p->detectOrder($original);
+      $this->assertEquals($original, $p->detectOrder());
+    }
 }
