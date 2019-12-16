@@ -56,8 +56,11 @@ class utf8 extends PlugIn
       return $encoding;
     }
 
-    public function convertEncoding($val, $to_encoding, $from_encoding=null) {
-      $from_encoding = $this->internalEncoding($from_encoding, true);
+    public function convertEncoding($val, $to_encoding=null, $from_encoding=null) {
+      $to_encoding = $this->internalEncoding($to_encoding, true);
+      if (is_null($from_encoding)) {
+        $from_encoding = $this->detectEncoding();
+      }
       return $this->_encoder->convertEncoding($val, $to_encoding, $from_encoding);
     }
 
