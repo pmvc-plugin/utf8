@@ -28,11 +28,20 @@ class utf8 extends PlugIn
       return utf8_encode($str); 
     }
 
-    public function detectOrder($encoding_list = null) {
-      if (!is_null($encoding_list)) {
-        $this->_encoder->detectOrder($encoding_list);
+    public function detectOrder($encoding_list = null, $keepDefault=false) {
+      $encoder = $this->_encoder;
+      $default = $encoder->detectOrder();
+      if (is_null($encoding_list)) {
+        $encoding_list = $default; 
+      } else {
+        $isSuccessful = $encoder->detectOrder($encoding_list);
+        if (!$isSuccessful) {
+          $encoding_list = false;
+        } elseif ($keepDefault) {
+          $encoder->detectOrder($default);
+        }
       }
-      return $this->_encoder->detectOrder();
+      return $encoding_list;
     }
 
     public function detectEncoding($str, $encoding_list = null, $strict = false) {
@@ -48,8 +57,10 @@ class utf8 extends PlugIn
       if (is_null($encoding)) {
         $encoding = $default;
       } else {
-        $encoding = $encoder->internalEncoding($encoding);
-        if ($keepDefault) {
+        $isSuccessful = $encoder->internalEncoding($encoding);
+        if (!$isSuccessful) {
+          $encoding = false;
+        } elseif ($keepDefault) {
           $encoder->internalEncoding($default);
         }
       }
