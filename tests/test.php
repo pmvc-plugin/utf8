@@ -35,4 +35,21 @@ class Utf8Test extends PHPUnit_Framework_TestCase
       $p->detectOrder($original);
       $this->assertEquals($original, $p->detectOrder());
     }
+
+    function testDetect()
+    {
+      $p = \PMVC\plug($this->_plug);
+      $s = file_get_contents(__DIR__.'/big5.txt');
+      $code = $p->detectEncoding($s, ['big-5', 'utf-8']); 
+      $this->assertEquals('BIG-5', $code);
+    }
+
+    function testToUtf8()
+    {
+      $p = \PMVC\plug($this->_plug);
+      $s = file_get_contents(__DIR__.'/big5.txt');
+      $new_s = $p->toUtf8($s, 'big-5');
+      $code = $p->detectEncoding($new_s, ['big-5', 'utf-8']); 
+      $this->assertEquals('UTF-8', $code);
+    }
 }

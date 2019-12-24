@@ -24,24 +24,28 @@ class utf8 extends PlugIn
         $this->_encoder = \PMVC\plug($this['encoder']);
     }
 
-    public function toUtf8($val)
+    public function toUtf8($val, $from_encoding_list = null)
     {
         if (\PMVC\isArray($val)) {
             $myval = \PMVC\get($val);
             array_walk_recursive(
                 $myval, function (&$item) {
                     if (is_string($item) && !$this->detectEncoding($item, 'utf-8', true)) {
-                        $item = $this->convertEncoding($item, 'utf-8');
+                        $item = $this->convertEncoding($item, 'utf-8', $from_encoding_list);
                     }
                 }
             );
             return $myval;
         } elseif (is_string($val) ) {
-            return $this->convertEncoding($val, 'utf-8');
+            return $this->convertEncoding($val, 'utf-8', $from_encoding_list);
         } elseif (is_numeric($val) ) { 
             return $val;
         } else {
-            return $this->convertEncoding(trim(var_export($val, true)), 'utf-8');
+            $myval = trim(var_export($val, true));
+            if (!$this->detectEncoding($myval, 'utf-8', true)) {
+              $myval = $this->convertEncoding($myval, 'utf-8', $from_encoding_list);
+            }
+            return $myval;
         }
     }
 
@@ -90,9 +94,7 @@ class utf8 extends PlugIn
     public function convertEncoding($val, $to_encoding=null, $from_encoding=null) 
     {
         $to_encoding = $this->internalEncoding($to_encoding, true);
-        if (is_null($from_encoding)) {
-            $from_encoding = $this->detectEncoding($val);
-        }
+        $from_encoding = $this->detectEncoding($val, $from_encoding);
         return $this->_encoder->convertEncoding($val, $to_encoding, $from_encoding);
     }
 
