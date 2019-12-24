@@ -30,7 +30,9 @@ class utf8 extends PlugIn
             $myval = \PMVC\get($val);
             array_walk_recursive(
                 $myval, function (&$item) {
-                    $item = $this->convertEncoding($item, 'utf-8');
+                    if (is_string($item) && !$this->detectEncoding($item, 'utf-8', true)) {
+                        $item = $this->convertEncoding($item, 'utf-8');
+                    }
                 }
             );
             return $myval;
