@@ -27,7 +27,7 @@ class utf8 extends PlugIn
     public function toUtf8($val)
     {
         if (\PMVC\isArray($val)) {
-            $myval = get($val);
+            $myval = \PMVC\get($val);
             array_walk_recursive(
                 $myval, function (&$item) {
                     $item = $this->convertEncoding($item, 'utf-8');
