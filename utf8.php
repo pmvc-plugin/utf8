@@ -37,7 +37,11 @@ class utf8 extends PlugIn
             );
             return $myval;
         } elseif (is_string($val) ) {
-            return $this->convertEncoding($val, 'utf-8', $from_encoding_list);
+            if (!$this->detectEncoding($val, 'utf-8', true)) {
+              return $this->convertEncoding($val, 'utf-8', $from_encoding_list);
+            } else {
+              return $val;
+            }
         } elseif (is_numeric($val) ) { 
             return $val;
         } else {
