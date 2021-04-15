@@ -26,8 +26,8 @@ class utf8 extends PlugIn
     public function toUtf8($val, $from_encoding_list = null, $bInit = false)
     {
         $isObj = is_object($val) && !$bInit;
-        if ($isObj || \PMVC\isArray($val)) {
-            $myval = \PMVC\get($val);
+        $myval = $isObj || \PMVC\isArray($val) ? \PMVC\get($val) : false;
+        if (!empty($myval)) {
             array_walk_recursive($myval, function (&$item) use (
                 $from_encoding_list
             ) {
