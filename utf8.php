@@ -26,7 +26,8 @@ class utf8 extends PlugIn
 
     public function toUtf8($val, $from_encoding_list = null)
     {
-        if (\PMVC\isArray($val)) {
+        $isObj = is_object($val);
+        if ($isObj || \PMVC\isArray($val)) {
             $myval = \PMVC\get($val);
             array_walk_recursive(
                 $myval, function (&$item) use ($from_encoding_list) {
@@ -39,6 +40,9 @@ class utf8 extends PlugIn
                     }
                 }
             );
+            if ($isObj) {
+                $myval = (object)$myval;
+            }
             return $myval;
         } elseif (is_string($val) ) {
             if (!$this->detectEncoding($val, 'utf-8', true)) {

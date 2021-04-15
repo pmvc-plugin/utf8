@@ -15,5 +15,8 @@
         "pmvc-plugin/mbstring": "*",
         "pmvc/pmvc": "*"
     },
+    "require-dev": {
+        "pmvc-plugin/unit": "*"
+    },
     "minimum-stability": "dev"
 }
