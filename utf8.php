@@ -23,20 +23,22 @@ class utf8 extends PlugIn
         $this->_encoder = \PMVC\plug($this['encoder']);
     }
 
-    public function toUtf8($val, $from_encoding_list = null, $bInit = false)
+    public function toUtf8($val, $from_encoding_list = null, $bAlreadyInit = false)
     {
-        $isObj = is_object($val) && !$bInit;
+        $getValue = function($val) use($bAlreadyInit) {
+            return $bAlreadyInit ? $val : \PMVC\get($val);
+        };
+        $isObj = is_object($val) && !$bAlreadyInit;
         $myval =
             $isObj || \PMVC\isArray($val)
-                ? ($bInit
-                    ? $val
-                    : \PMVC\get($val))
+                ? $getValue($val) 
                 : false;
         if (!empty($myval)) {
             array_walk_recursive($myval, function (&$item) use (
-                $from_encoding_list
+              $from_encoding_list,
+              $getValue
             ) {
-                if (\PMVC\testString($item)) {
+                if (is_string($item)) {
                     if (!$this->detectEncoding($item, 'utf-8', true)) {
                         $item = $this->convertEncoding(
                             $item,
@@ -44,8 +46,8 @@ class utf8 extends PlugIn
                             $from_encoding_list
                         );
                     }
-                } else {
-                    $item = $this->toUtf8($item, $from_encoding_list, true);
+                } elseif (!\PMVC\testString($item)) {
+                    $item = $this->toUtf8($getValue($item), $from_encoding_list, true);
                 }
             });
             if ($isObj) {
@@ -62,10 +64,10 @@ class utf8 extends PlugIn
             } else {
                 return $val;
             }
-        } elseif (is_numeric($val)) {
+        } elseif (\PMVC\testString($val)) {
             return $val;
         } else {
-            $myval = trim(var_export($val, true));
+            $myval = print_r($val, true);
             if (!$this->detectEncoding($myval, 'utf-8', true)) {
                 $myval = $this->convertEncoding(
                     $myval,
