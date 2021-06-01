@@ -23,20 +23,20 @@ class utf8 extends PlugIn
         $this->_encoder = \PMVC\plug($this['encoder']);
     }
 
-    public function toUtf8($val, $from_encoding_list = null, $bAlreadyInit = false)
-    {
-        $getValue = function($val) use($bAlreadyInit) {
+    public function toUtf8(
+        $val,
+        $from_encoding_list = null,
+        $bAlreadyInit = false
+    ) {
+        $getValue = function ($val) use ($bAlreadyInit) {
             return $bAlreadyInit ? $val : \PMVC\get($val);
         };
         $isObj = is_object($val) && !$bAlreadyInit;
-        $myval =
-            $isObj || \PMVC\isArray($val)
-                ? $getValue($val) 
-                : false;
+        $myval = $isObj || \PMVC\isArray($val) ? $getValue($val) : false;
         if (!empty($myval)) {
             array_walk_recursive($myval, function (&$item) use (
-              $from_encoding_list,
-              $getValue
+                $from_encoding_list,
+                $getValue
             ) {
                 if (is_string($item)) {
                     if (!$this->detectEncoding($item, 'utf-8', true)) {
@@ -47,7 +47,11 @@ class utf8 extends PlugIn
                         );
                     }
                 } elseif (!\PMVC\testString($item)) {
-                    $item = $this->toUtf8($getValue($item), $from_encoding_list, true);
+                    $item = $this->toUtf8(
+                        $getValue($item),
+                        $from_encoding_list,
+                        true
+                    );
                 }
             });
             if ($isObj) {
@@ -99,9 +103,15 @@ class utf8 extends PlugIn
     public function detectEncoding($str, $encoding_list = null, $strict = false)
     {
         if (is_null($encoding_list)) {
-            $encoding_list = $this->detectOrder();
+            $encoding_list = join(', ', $this->detectOrder());
         }
-        return $this->_encoder->detectEncoding($str, $encoding_list, $strict);
+        $result = $this->_encoder->detectEncoding(
+            $str,
+            $encoding_list,
+            $strict
+        );
+
+        return $result;
     }
 
     public function internalEncoding($encoding = null, $keepDefault = false)
@@ -128,6 +138,9 @@ class utf8 extends PlugIn
     ) {
         $to_encoding = $this->internalEncoding($to_encoding, true);
         $from_encoding = $this->detectEncoding($val, $from_encoding, true);
+        if (empty($from_encoding)) {
+            $from_encoding = null;
+        }
         return $this->_encoder->convertEncoding(
             $val,
             $to_encoding,
